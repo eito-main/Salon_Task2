@@ -9,31 +9,34 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var firstText: UITextField!
-    @IBOutlet weak var secondText: UITextField!
+    @IBOutlet weak var firstTextField: UITextField!
+    @IBOutlet weak var secondTextField: UITextField!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var answerLabel: UILabel!
+    
+    private var textFiels: [UITextField] { [firstTextField, secondTextField] }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        answerLabel.text = "0"
+        answerLabel.text = "0.0"
         
-        self.firstText.keyboardType = UIKeyboardType.numberPad
-        self.secondText.keyboardType = UIKeyboardType.numberPad
+        textFiels.forEach {
+            $0.keyboardType = .numberPad
+        }
     }
     
     @IBAction func buttonAction(_ sender: Any) {
+        let numberFormatter = NumberFormatter()
         
-        let firstNum = NumberFormatter().number(from: firstText.text ?? "0") as? Double ?? Double(0)
-        let secondNum = NumberFormatter().number(from: secondText.text ?? "0") as? Double ?? Double(0)
+        let numbers = textFiels.map { numberFormatter.number(from: $0.text ?? "")?.doubleValue ?? 0.0 }
         
-        if segmentedControl.selectedSegmentIndex == 3 && secondNum == Double(0) {
+        if segmentedControl.selectedSegmentIndex == 3 && numbers[1] == 0.0 {
             answerLabel.text = "割る数には0以外を入力してください"
             return
         }
         
-        answerLabel.text = "\(calculator(firstNum: firstNum, secondNum: secondNum))"
+        answerLabel.text = "\(calculator(firstNum: numbers[0], secondNum: numbers[1]))"
     }
     
     func calculator(firstNum: Double, secondNum: Double) -> Double {

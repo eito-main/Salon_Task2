@@ -86,8 +86,8 @@
                     </view>
                     <connections>
                         <outlet property="answerLabel" destination="CFZ-qJ-vzw" id="DHC-CX-jse"/>
-                        <outlet property="firstText" destination="Cdo-mc-OyK" id="0bz-EM-iQn"/>
-                        <outlet property="secondText" destination="n8i-Hr-KoY" id="6MG-1H-DZb"/>
+                        <outlet property="firstTextField" destination="Cdo-mc-OyK" id="0bz-EM-iQn"/>
+                        <outlet property="secondTextField" destination="n8i-Hr-KoY" id="6MG-1H-DZb"/>
                         <outlet property="segmentedControl" destination="nnK-zg-Lut" id="jzY-XD-oKj"/>
                     </connections>
                 </viewController>
