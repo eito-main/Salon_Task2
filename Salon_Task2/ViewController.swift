@@ -7,21 +7,42 @@
 
 import UIKit
 
+private enum Operation {
+    case addition
+    case subtraction
+    case multiplication
+    case division
+
+    init?(selectedSegmentIndex: Int) {
+        switch selectedSegmentIndex {
+        case 0:
+            self = .addition
+        case 1:
+            self = .subtraction
+        case 2:
+            self = .multiplication
+        case 3:
+            self = .division
+        default:
+            return nil
+        }
+    }
+}
+
 class ViewController: UIViewController {
+    @IBOutlet private weak var firstTextField: UITextField!
+    @IBOutlet private weak var secondTextField: UITextField!
+    @IBOutlet private weak var segmentedControl: UISegmentedControl!
+    @IBOutlet private weak var answerLabel: UILabel!
     
-    @IBOutlet weak var firstTextField: UITextField!
-    @IBOutlet weak var secondTextField: UITextField!
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
-    @IBOutlet weak var answerLabel: UILabel!
-    
-    private var textFiels: [UITextField] { [firstTextField, secondTextField] }
+    private var textFields: [UITextField] { [firstTextField, secondTextField] }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         answerLabel.text = "0.0"
         
-        textFiels.forEach {
+        textFields.forEach {
             $0.keyboardType = .numberPad
         }
     }
@@ -29,30 +50,33 @@ class ViewController: UIViewController {
     @IBAction func buttonAction(_ sender: Any) {
         let numberFormatter = NumberFormatter()
         
-        let numbers = textFiels.map { numberFormatter.number(from: $0.text ?? "")?.doubleValue ?? 0.0 }
+        let numbers = textFields.map { numberFormatter.number(from: $0.text ?? "")?.doubleValue ?? 0.0 }
+
+        let isDivisionByZero = segmentedControl.selectedSegmentIndex == 3 && numbers[1] == 0.0
         
-        if segmentedControl.selectedSegmentIndex == 3 && numbers[1] == 0.0 {
+        guard !isDivisionByZero else {
             answerLabel.text = "割る数には0以外を入力してください"
             return
         }
         
-        answerLabel.text = "\(calculator(firstNum: numbers[0], secondNum: numbers[1]))"
+        answerLabel.text = "\(calculate(firstNum: numbers[0], secondNum: numbers[1]) ?? 0)"
     }
     
-    func calculator(firstNum: Double, secondNum: Double) -> Double {
+    func calculate(firstNum: Double, secondNum: Double) -> Double? {
+
+        guard let operation = Operation(selectedSegmentIndex: segmentedControl.selectedSegmentIndex) else {
+            return nil
+        }
         
-        switch segmentedControl.selectedSegmentIndex {
-        case 0: //+
+        switch operation {
+        case .addition:
             return firstNum + secondNum
-        case 1: //-
+        case .subtraction:
             return firstNum - secondNum
-        case 2: //×
+        case .multiplication:
             return firstNum * secondNum
-        case 3: //÷
+        case .division:
             return firstNum / secondNum
-        default:
-            return Double(0)
         }
     }
 }
-
